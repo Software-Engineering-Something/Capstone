@@ -8,20 +8,48 @@ import csv
 
 def main():
     test = []
-    read("fundamentals_dataset.csv", test)
-
+    temread("fundamentals_dataset.csv", test)
     """Test method"""
-    assets_per_quarter("ALCO, INC.", "2015", "Q2", "Assets", test)
+    #assets_per_quarter("ALCO, INC.", "2015", "Q2", "Assets", test)
+    for i in range(len(test)):
+        print(test[i].indicators[0].amount)
+
+def temread(file, test):
+    with open(file) as csvfile:
+        quarter = None
+        quarterob = None
+        readcsv = csv.reader(csvfile, delimiter=',')
+        for row in readcsv:
+            if row[0] == "period":
+                continue
+
+            split = row[0].split(' ')
+            temp = split[1]
+            if quarter is None:
+                quarter = temp
+                quarterob = Quarter(quarter)
+
+            if quarter != temp:
+                test.append(quarterob)
+                quarter = temp
+                quarterob = Quarter(quarter)
+
+            if quarter == temp:
+                indicator = Indicator(row[3], row[4], row[5])
+                quarterob.indicators.append(indicator)
 
 
+
+
+"""        
 def read(file, test):
-    """Fix time complexity"""
+    #Fix time complexity
     companynames = []
     with open(file) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             if row[0] == "period":
-                continue
+                  continue
             elif row[1] not in companynames:
                 companynames.append(row[1])
                 company = Company(row[1], row[2])
@@ -46,7 +74,7 @@ def read(file, test):
                             if test[i].years[k].year == split[0]:
                                 if test[i].years[k].quarters[q].quarter == split[1]:
                                     test[i].years[k].quarters[q].indicators.append(Indicator(row[3], row[4], row[5]))
-
+"""
 
 def assets_per_quarter(company, year, quarter, assets, test):
     for i in range(len(test)):
