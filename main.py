@@ -19,18 +19,30 @@ def main():
     test = []
     read("fundamentals_dataset.csv", test)
     for i in range(len(test)):
-        print(test[i].name + ", " + test[i].ticker)
+        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].year)
 
 
 def read(file, test):
+    """Fix time complexity"""
     companynames = []
     with open(file) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
-            if row[1] not in companynames and row[1] != "company":
+            if row[0] == "period":
+                continue
+            elif row[1] not in companynames:
                 companynames.append(row[1])
                 company = Company(row[1], row[2])
                 test.append(company)
+            for i in range(len(test)):
+                if test[i].name == row[1]:
+                    split = row[0].split(' ')
+                    count = 0
+                    for j in range(len(test[i].years)):
+                        if test[i].years[j].year != split[0]:
+                            count += 1
+                    if count == len(test[i].years):
+                        test[i].years.append(Year(split[0]))
 
 
 if __name__ == '__main__':
