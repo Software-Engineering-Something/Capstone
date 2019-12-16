@@ -6,20 +6,12 @@ import csv
 
 
 def main():
-    """Testing a case. May clean this up by adding methods in associated classes"""
-    """msci = Company("msci", "something")
-    msci.years.append(Year(2014))
-    print(msci.years[0].year)
-    msci.years[0].quarters.append(Quarter("Q1"))
-    print(msci.years[0].quarters[0].quarter)
-    msci.years[0].quarters[0].assets.unit = "US Dollars"
-    print(msci.years[0].quarters[0].assets.unit)
-    msci.years[0].quarters[0].assets.amount = 24.50
-    print(msci.years[0].quarters[0].assets.amount)"""
+    """Testing a case."""
     test = []
     read("fundamentals_dataset.csv", test)
     for i in range(len(test)):
-        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].year)
+        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].quarters[0].assets.unit + " " +
+              test[i].years[0].quarters[0].assets.amount)
 
 
 def read(file, test):
@@ -37,12 +29,23 @@ def read(file, test):
             for i in range(len(test)):
                 if test[i].name == row[1]:
                     split = row[0].split(' ')
-                    count = 0
+                    yearcount = 0
+                    quartercount = 0
                     for j in range(len(test[i].years)):
                         if test[i].years[j].year != split[0]:
-                            count += 1
-                    if count == len(test[i].years):
+                            yearcount += 1
+                        for k in range(len(test[i].years[j].quarters)):
+                            if test[i].years[j].quarters[k].quarter != split[1]:
+                                quartercount += 1
+                    if yearcount == len(test[i].years):
                         test[i].years.append(Year(split[0]))
+                    for k in range(len(test[i].years)):
+                        if quartercount == len(test[i].years[k].quarters):
+                            test[i].years[k].quarters.append(Quarter(split[1]))
+                        for l in range(len(test[i].years[k].quarters)):
+                            if test[i].years[k].quarters[l].quarter == split[1]:
+                                test[i].years[k].quarters[l].assets.unit = row[4]
+                                test[i].years[k].quarters[l].assets.amount = row[5]
 
 
 if __name__ == '__main__':
