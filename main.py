@@ -2,6 +2,7 @@ import csv
 from Company import Company
 from Year import Year
 from Quarter import Quarter
+from Indicator import Indicator
 import csv
 
 
@@ -10,8 +11,8 @@ def main():
     test = []
     read("fundamentals_dataset.csv", test)
     for i in range(len(test)):
-        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].quarters[0].assets.unit + " " +
-              test[i].years[0].quarters[0].assets.amount)
+        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].quarters[0].indicators[0].name + ": " +
+              test[i].years[0].quarters[0].indicators[0].unit + " " + test[i].years[0].quarters[0].indicators[0].amount)
 
 
 def read(file, test):
@@ -44,8 +45,7 @@ def read(file, test):
                             test[i].years[k].quarters.append(Quarter(split[1]))
                         for l in range(len(test[i].years[k].quarters)):
                             if test[i].years[k].quarters[l].quarter == split[1]:
-                                test[i].years[k].quarters[l].assets.unit = row[4]
-                                test[i].years[k].quarters[l].assets.amount = row[5]
+                                test[i].years[k].quarters[l].indicators.append(Indicator(row[3], row[4], row[5]))
 
 
 if __name__ == '__main__':
