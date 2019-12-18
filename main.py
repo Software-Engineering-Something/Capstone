@@ -7,12 +7,11 @@ import csv
 
 
 def main():
-    """Testing a case."""
     test = []
     read("fundamentals_dataset.csv", test)
-    for i in range(len(test)):
-        print(test[i].name + ", " + test[i].ticker + " " + test[i].years[0].quarters[0].indicators[0].name + ": " +
-              test[i].years[0].quarters[0].indicators[0].unit + " " + test[i].years[0].quarters[0].indicators[0].amount)
+
+    """Test method"""
+    assets_per_quarter("ALCO, INC.", "2015", "Q2", "Assets", test)
 
 
 def read(file, test):
@@ -31,21 +30,35 @@ def read(file, test):
                 if test[i].name == row[1]:
                     split = row[0].split(' ')
                     yearcount = 0
-                    quartercount = 0
                     for j in range(len(test[i].years)):
                         if test[i].years[j].year != split[0]:
                             yearcount += 1
-                        for k in range(len(test[i].years[j].quarters)):
-                            if test[i].years[j].quarters[k].quarter != split[1]:
-                                quartercount += 1
                     if yearcount == len(test[i].years):
                         test[i].years.append(Year(split[0]))
                     for k in range(len(test[i].years)):
+                        quartercount = 0
+                        for m in range(len(test[i].years[k].quarters)):
+                            if test[i].years[k].quarters[m].quarter != split[1]:
+                                quartercount += 1
                         if quartercount == len(test[i].years[k].quarters):
                             test[i].years[k].quarters.append(Quarter(split[1]))
-                        for l in range(len(test[i].years[k].quarters)):
-                            if test[i].years[k].quarters[l].quarter == split[1]:
-                                test[i].years[k].quarters[l].indicators.append(Indicator(row[3], row[4], row[5]))
+                        for q in range(len(test[i].years[k].quarters)):
+                            if test[i].years[k].year == split[0]:
+                                if test[i].years[k].quarters[q].quarter == split[1]:
+                                    test[i].years[k].quarters[q].indicators.append(Indicator(row[3], row[4], row[5]))
+
+
+def assets_per_quarter(company, year, quarter, assets, test):
+    for i in range(len(test)):
+        if test[i].name == company:
+            for j in range(len(test[i].years)):
+                if test[i].years[j].year == year:
+                    for k in range(len(test[i].years[j].quarters)):
+                        if test[i].years[j].quarters[k].quarter == quarter:
+                            for q in range(len(test[i].years[j].quarters[k].indicators)):
+                                if test[i].years[j].quarters[k].indicators[q].name == assets:
+                                    print(test[i].years[j].quarters[k].indicators[q].unit + " " +
+                                          test[i].years[j].quarters[k].indicators[q].amount)
 
 
 if __name__ == '__main__':
