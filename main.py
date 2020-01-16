@@ -1,4 +1,5 @@
-import dask.dataframe
+import dask.dataframe as dd
+import pandas as pd
 
 
 def main():
@@ -6,12 +7,13 @@ def main():
     csv file and parses into data. From there we can use query like calls to search for specific data at O(N) time,
     I'm still new to dataframes, so doing these two search queries may somehow be done in line"""
 
-    # reads from csv and stores into a dataframe
-    data = dask.dataframe.read_csv("fundamentals_dataset.csv")
-    # searches for all instances of specified company name, stores in temp dataframe
-    temp = data[(data.company == '1347 Property Insurance Holdings, Inc.')]
-    # searches for all instances of specified period within temp dataframe and prints results
-    print(temp[(temp.period == '2014 Q1')].compute())
+    df = pd.read_csv("fundamentals_dataset.csv")
+    ddf = dd.from_pandas(df, npartitions=2)
+    new = df[df.company == '1347 Property Insurance Holdings, Inc.'][df.period == '2014 Q1']
+    new['amount'] = new['amount'].str.replace(',', '')
+    print(new[new['amount'].astype(int) > 20000000])
+    temp = new[new['amount'].astype(int) > 20000000]
+    print("getting only the second rows amount: " + temp['amount'].iloc[1])
 
 
 if __name__ == '__main__':
